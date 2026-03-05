@@ -416,6 +416,33 @@ html, body {
   height: 100dvh;
   padding: 12px;
   overflow: hidden;
+  position: relative;
+}
+
+.quit-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 100;
+  width: 36px;
+  height: 36px;
+  background: rgba(13, 13, 43, 0.8);
+  border: 1px solid rgba(255, 45, 149, 0.3);
+  border-radius: 6px;
+  color: var(--neon-pink);
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+  line-height: 1;
+}
+
+.quit-btn:hover {
+  background: rgba(255, 45, 149, 0.15);
+  border-color: var(--neon-pink);
+  box-shadow: 0 0 12px rgba(255, 45, 149, 0.3);
 }
 
 .game-layout {

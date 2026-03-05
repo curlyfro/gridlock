@@ -41,6 +41,7 @@ export function GameScreen() {
   const tickTimer = useGameStore(s => s.tickTimer);
   const timeRemaining = useGameStore(s => s.timeRemaining);
   const scoreTarget = useGameStore(s => s.scoreTarget);
+  const goToTitle = useGameStore(s => s.goToTitle);
   const rounds = useGameStore(s => s.rounds);
 
   const [shakeTrigger, setShakeTrigger] = useState(0);
@@ -166,6 +167,7 @@ export function GameScreen() {
 
   return (
     <div className="game-screen">
+      <button className="quit-btn" onClick={goToTitle} title="Quit to menu">✕</button>
       <ScreenShake trigger={shakeTrigger} intensity={human.onFire ? 8 : 4}>
         <div className="game-layout">
           {/* Human side */}
