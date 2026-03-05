@@ -6,8 +6,6 @@ import { GRID_SIZE } from '../constants/pieces';
 
 export interface DragState {
   piece: Piece | null;
-  x: number;
-  y: number;
   gridPos: GridPosition | null;
   valid: boolean;
   dragging: boolean;
@@ -24,24 +22,18 @@ interface UseDragAndDropOpts {
 
 export function useDragAndDrop({ grid, cellSize, boardRef, onDrop, onInvalidDrop, isWildcard }: UseDragAndDropOpts) {
   const [dragState, setDragState] = useState<DragState>({
-    piece: null, x: 0, y: 0, gridPos: null, valid: false, dragging: false,
+    piece: null, gridPos: null, valid: false, dragging: false,
   });
 
-  const dragRef = useRef<DragState>(dragState);
-  const rafRef = useRef<number>(0);
+  const dragRef = useRef(dragState);
+  const positionRef = useRef({ x: 0, y: 0 });
   const isMobileRef = useRef(false);
-
-  const updateDragState = useCallback((update: Partial<DragState>) => {
-    dragRef.current = { ...dragRef.current, ...update };
-    setDragState(prev => ({ ...prev, ...update }));
-  }, []);
 
   const snapToGrid = useCallback((clientX: number, clientY: number, shape: PieceShape): { pos: GridPosition | null; valid: boolean } => {
     const board = boardRef.current;
     if (!board) return { pos: null, valid: false };
 
     const rect = board.getBoundingClientRect();
-    // Offset for piece center
     const pieceWidthPx = shape.matrix[0].length * cellSize;
     const pieceHeightPx = shape.matrix.length * cellSize;
     const offsetY = isMobileRef.current ? 60 : 0;
@@ -63,35 +55,35 @@ export function useDragAndDrop({ grid, cellSize, boardRef, onDrop, onInvalidDrop
 
   const startDrag = useCallback((piece: Piece, clientX: number, clientY: number, mobile: boolean) => {
     isMobileRef.current = mobile;
-    updateDragState({
-      piece,
-      x: clientX,
-      y: clientY - (mobile ? 60 : 0),
-      gridPos: null,
-      valid: false,
-      dragging: true,
-    });
-  }, [updateDragState]);
+    const offsetY = mobile ? 60 : 0;
+    positionRef.current = { x: clientX, y: clientY - offsetY };
+    const newState: DragState = { piece, gridPos: null, valid: false, dragging: true };
+    dragRef.current = newState;
+    setDragState(newState);
+  }, []);
 
   const moveDrag = useCallback((clientX: number, clientY: number) => {
     if (!dragRef.current.dragging || !dragRef.current.piece) return;
 
-    cancelAnimationFrame(rafRef.current);
-    rafRef.current = requestAnimationFrame(() => {
-      const offsetY = isMobileRef.current ? 60 : 0;
-      const { pos, valid } = snapToGrid(clientX, clientY, dragRef.current.piece!.shape);
-      updateDragState({
-        x: clientX,
-        y: clientY - offsetY,
-        gridPos: pos,
-        valid,
-      });
-    });
-  }, [snapToGrid, updateDragState]);
+    const offsetY = isMobileRef.current ? 60 : 0;
+    // Update position ref directly — no React re-render
+    positionRef.current = { x: clientX, y: clientY - offsetY };
+
+    // Only update React state when grid snap changes
+    const { pos, valid } = snapToGrid(clientX, clientY, dragRef.current.piece!.shape);
+    const prev = dragRef.current;
+    if (pos?.row !== prev.gridPos?.row || pos?.col !== prev.gridPos?.col || valid !== prev.valid) {
+      const newState = { ...prev, gridPos: pos, valid };
+      dragRef.current = newState;
+      setDragState(newState);
+    }
+  }, [snapToGrid]);
 
   const endDrag = useCallback(() => {
     if (!dragRef.current.dragging || !dragRef.current.piece) {
-      updateDragState({ piece: null, dragging: false, gridPos: null, valid: false });
+      const newState: DragState = { piece: null, dragging: false, gridPos: null, valid: false };
+      dragRef.current = newState;
+      setDragState(newState);
       return;
     }
 
@@ -104,8 +96,10 @@ export function useDragAndDrop({ grid, cellSize, boardRef, onDrop, onInvalidDrop
       if (navigator.vibrate) navigator.vibrate([20, 30, 20]);
     }
 
-    updateDragState({ piece: null, dragging: false, gridPos: null, valid: false });
-  }, [onDrop, onInvalidDrop, updateDragState]);
+    const newState: DragState = { piece: null, dragging: false, gridPos: null, valid: false };
+    dragRef.current = newState;
+    setDragState(newState);
+  }, [onDrop, onInvalidDrop]);
 
-  return { dragState, startDrag, moveDrag, endDrag };
+  return { dragState, positionRef, startDrag, moveDrag, endDrag };
 }

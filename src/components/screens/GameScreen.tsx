@@ -92,7 +92,7 @@ export function GameScreen() {
 
   const isWildcard = activePowerUp?.type === 'wildcard';
 
-  const { dragState, startDrag, moveDrag, endDrag } = useDragAndDrop({
+  const { dragState, positionRef, startDrag, moveDrag, endDrag } = useDragAndDrop({
     grid: human.grid,
     cellSize: humanCellSize,
     boardRef: humanBoardRef,
@@ -261,7 +261,7 @@ export function GameScreen() {
         </div>
       </ScreenShake>
 
-      <FloatingPiece dragState={dragState} cellSize={humanCellSize} />
+      <FloatingPiece dragState={dragState} positionRef={positionRef} cellSize={humanCellSize} />
     </div>
   );
 }

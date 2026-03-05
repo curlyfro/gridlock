@@ -1,29 +1,56 @@
+import { useRef, useEffect } from 'react';
 import { CellState } from '../../types/game';
 import { COLORS } from '../../constants/theme';
 import { DragState } from '../../hooks/useDragAndDrop';
 
 interface FloatingPieceProps {
   dragState: DragState;
+  positionRef: React.RefObject<{ x: number; y: number }>;
   cellSize: number;
 }
 
-export function FloatingPiece({ dragState, cellSize }: FloatingPieceProps) {
+export function FloatingPiece({ dragState, positionRef, cellSize }: FloatingPieceProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const rafRef = useRef<number>(0);
+
+  useEffect(() => {
+    if (!dragState.dragging || !dragState.piece) {
+      cancelAnimationFrame(rafRef.current);
+      return;
+    }
+
+    const el = containerRef.current;
+    if (!el) return;
+
+    const { matrix } = dragState.piece.shape;
+    const miniCellSize = cellSize * 0.8;
+    const widthPx = matrix[0].length * miniCellSize;
+    const heightPx = matrix.length * miniCellSize;
+
+    const update = () => {
+      const { x, y } = positionRef.current;
+      el.style.transform = `translate3d(${x - widthPx / 2}px, ${y - heightPx / 2}px, 0)`;
+      rafRef.current = requestAnimationFrame(update);
+    };
+    rafRef.current = requestAnimationFrame(update);
+
+    return () => cancelAnimationFrame(rafRef.current);
+  }, [dragState.dragging, dragState.piece, cellSize, positionRef]);
+
   if (!dragState.dragging || !dragState.piece) return null;
 
-  const { piece, x, y } = dragState;
+  const { piece } = dragState;
   const { matrix, color } = piece.shape;
   const miniCellSize = cellSize * 0.8;
-  const widthPx = matrix[0].length * miniCellSize;
-  const heightPx = matrix.length * miniCellSize;
 
   return (
     <div
+      ref={containerRef}
       className="floating-piece"
       style={{
         position: 'fixed',
         left: 0,
         top: 0,
-        transform: `translate3d(${x - widthPx / 2}px, ${y - heightPx / 2}px, 0)`,
         pointerEvents: 'none',
         zIndex: 1000,
         display: 'inline-grid',
@@ -42,7 +69,6 @@ export function FloatingPiece({ dragState, cellSize }: FloatingPieceProps) {
               height: miniCellSize,
               backgroundColor: filled ? COLORS.cells[color as CellState] : 'transparent',
               borderRadius: 2,
-              boxShadow: filled ? `0 0 10px ${COLORS.cells[color as CellState]}` : 'none',
               border: filled ? `1px solid ${COLORS.cells[color as CellState]}` : 'none',
               opacity: filled ? 1 : 0,
             }}

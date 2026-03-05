@@ -21,6 +21,21 @@ const MODE_LABELS: Record<GameMode, string> = {
   bestOf3: 'BEST OF 3',
 };
 
+function getSubtitle(won: boolean, mode: GameMode): string {
+  if (mode === 'gridlock') {
+    return won
+      ? 'The AI ran out of moves - gridlocked!'
+      : 'You ran out of valid moves - gridlocked!';
+  }
+  if (mode === 'scoreRace') {
+    return won ? 'You hit the target first!' : 'The AI hit the target first!';
+  }
+  if (mode === 'timed') {
+    return won ? 'You scored higher before time ran out!' : 'The AI scored higher before time ran out!';
+  }
+  return won ? 'You won the match!' : 'The AI won the match!';
+}
+
 export function GameOverScreen({ winner, human, ai, difficulty, mode, rounds, onReplay, onTitle }: GameOverScreenProps) {
   useEffect(() => {
     saveHighScore(difficulty, human.score);
@@ -34,6 +49,9 @@ export function GameOverScreen({ winner, human, ai, difficulty, mode, rounds, on
       <h1 className={`game-over-title ${won ? 'win' : 'lose'}`}>
         {won ? 'YOU WIN!' : 'DEFEATED'}
       </h1>
+      <p className="game-over-subtitle">
+        {getSubtitle(won, mode)}
+      </p>
 
       {mode === 'bestOf3' && (
         <div className="round-tracker">
@@ -52,7 +70,7 @@ export function GameOverScreen({ winner, human, ai, difficulty, mode, rounds, on
       )}
 
       <div className="game-over-scores">
-        <div className="score-column">
+        <div className={`score-column ${won ? 'winner' : 'loser'}`}>
           <div className="score-column-label">YOU</div>
           <div className="score-column-value">{human.score.toLocaleString()}</div>
           <div className="score-stat">Blocks: {human.blocksPlaced}</div>
@@ -61,7 +79,7 @@ export function GameOverScreen({ winner, human, ai, difficulty, mode, rounds, on
           <div className="score-stat">Level: {human.level}</div>
         </div>
         <div className="score-divider" />
-        <div className="score-column">
+        <div className={`score-column ${won ? 'loser' : 'winner'}`}>
           <div className="score-column-label">AI</div>
           <div className="score-column-value">{ai.score.toLocaleString()}</div>
           <div className="score-stat">Blocks: {ai.blocksPlaced}</div>

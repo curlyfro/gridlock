@@ -21,6 +21,10 @@ export function ScreenShake({ trigger, intensity = 4, children }: ScreenShakePro
       className={shaking ? 'screen-shake' : ''}
       style={{
         ['--shake-intensity' as string]: `${intensity}px`,
+        flex: 1,
+        display: 'flex',
+        flexDirection: 'column' as const,
+        minHeight: 0,
       }}
     >
       {children}

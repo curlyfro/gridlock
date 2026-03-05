@@ -805,6 +805,32 @@ html, body {
 .game-over-title.lose {
   color: var(--neon-pink);
   text-shadow: 0 0 20px var(--neon-pink), 0 0 60px rgba(255, 45, 149, 0.4);
+  animation: losePulse 1.5s ease-in-out infinite;
+}
+
+@keyframes losePulse {
+  0%, 100% { text-shadow: 0 0 20px var(--neon-pink), 0 0 60px rgba(255, 45, 149, 0.4); }
+  50% { text-shadow: 0 0 30px var(--neon-pink), 0 0 80px rgba(255, 45, 149, 0.6), 0 0 120px rgba(255, 45, 149, 0.3); }
+}
+
+.game-over-subtitle {
+  font-family: var(--font-ui);
+  font-size: 14px;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+  margin-top: -16px;
+}
+
+.score-column.winner {
+  border: 1px solid var(--neon-green);
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0 0 20px rgba(57, 255, 20, 0.3), inset 0 0 15px rgba(57, 255, 20, 0.05);
+}
+
+.score-column.loser {
+  opacity: 0.5;
+  padding: 12px;
 }
 
 .game-over-scores {
@@ -872,83 +898,113 @@ html, body {
 
 /* Mobile */
 @media (max-width: 768px) {
+  /* Fill the viewport — no centering, no dead space */
+  .app-content {
+    align-items: stretch;
+    justify-content: stretch;
+  }
+
   .game-screen {
-    padding: 6px;
-    overflow-y: auto;
-    overflow-x: hidden;
-    -webkit-overflow-scrolling: touch;
+    padding: 4px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
   }
 
   .game-layout {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto auto;
-    gap: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
     padding: 0;
-    height: auto;
-    min-height: 100%;
+    height: 100%;
+    flex: 1;
+    align-items: center;
   }
 
   .player-side {
-    gap: 4px;
+    gap: 2px;
+    width: 100%;
   }
 
-  /* AI side: compact row layout at top */
+  /* Explicit ordering: AI first, VS second, human fills rest */
+  .ai-side { order: 1; }
+  .vs-column { order: 2; flex-shrink: 0; }
+  .human-side { order: 3; flex: 1; min-height: 0; }
+
+  /* AI side: compact horizontal row at top */
   .ai-side {
-    order: -1;
     flex-direction: row;
-    flex-wrap: wrap;
+    align-items: center;
     justify-content: center;
-    gap: 6px;
-    padding: 2px 0;
-  }
-
-  .ai-side .score-panel {
-    padding: 4px 10px;
-    min-width: 0;
-    flex: 1;
-  }
-
-  .ai-side .score-panel .score-value { font-size: 16px; }
-  .ai-side .score-panel .score-details { display: none; }
-
-  .ai-board-container {
-    max-width: 40%;
+    gap: 8px;
+    padding: 2px 4px;
+    flex-wrap: nowrap;
+    flex-shrink: 0;
   }
 
   .ai-panel {
     flex-direction: row;
+    align-items: center;
     gap: 6px;
+    flex-shrink: 0;
   }
 
-  .ai-panel .robot-avatar { width: 32px !important; height: 32px !important; }
+  .ai-panel .robot-avatar { width: 28px !important; height: 28px !important; }
   .ai-name { font-size: 8px; }
   .ai-thinking-dots { font-size: 7px; }
 
-  /* VS: minimal horizontal bar */
+  .ai-side .score-panel {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 8px;
+    min-width: 0;
+    flex-shrink: 0;
+  }
+
+  .ai-side .score-panel .score-label { margin-bottom: 0; font-size: 7px; }
+  .ai-side .score-panel .score-value { font-size: 14px; }
+  .ai-side .score-panel .score-details { display: none; }
+
+  .ai-board-container {
+    max-width: 40vw;
+    flex-shrink: 1;
+  }
+
+  /* VS: hide decorative elements, keep mode HUDs */
   .vs-column {
     flex-direction: row;
-    gap: 8px;
+    gap: 6px;
     align-items: center;
+    justify-content: center;
+    width: 100%;
   }
 
-  .vs-center {
-    flex-direction: row;
-    padding: 2px 0;
-  }
+  .vs-center { display: none; }
 
-  .vs-text { font-size: 14px; }
-
-  .vs-line {
-    width: 40px;
-    height: 2px;
-    background: linear-gradient(to right, transparent, var(--neon-pink), transparent);
-  }
-
-  /* Human board: fill remaining space */
+  /* Human board: expand to fill available space */
   .human-side .board-container {
-    max-width: 100%;
-    aspect-ratio: auto;
+    max-width: 85vw;
+    flex: 1;
+    min-height: 0;
+    aspect-ratio: 1;
   }
+
+  /* Human score panel: compact horizontal strip */
+  .human-side .score-panel {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    padding: 3px 8px;
+    min-width: 0;
+    width: 100%;
+  }
+
+  .human-side .score-panel .score-label { margin-bottom: 0; font-size: 7px; }
+  .human-side .score-panel .score-value { font-size: 14px; }
+  .human-side .score-panel .score-details { font-size: 9px; margin-top: 0; }
 
   .score-panel {
     padding: 4px 10px;
@@ -956,13 +1012,11 @@ html, body {
     width: 100%;
   }
 
-  .score-value { font-size: 18px; }
-  .score-label { font-size: 7px; }
-
   .piece-tray {
     padding: 4px 6px;
     gap: 6px;
-    min-height: 56px;
+    min-height: 52px;
+    flex-shrink: 0;
   }
 
   .mode-grid {
@@ -977,10 +1031,16 @@ html, body {
   .hud-label { font-size: 6px; }
   .hud-value { font-size: 14px; }
 
+  /* Game Over: compact on mobile */
+  .game-over-screen {
+    gap: 16px;
+    padding: 16px;
+  }
+
   .game-over-scores {
     flex-direction: column;
     align-items: center;
-    gap: 16px;
+    gap: 12px;
   }
 
   .score-divider {
@@ -1008,8 +1068,8 @@ html, body {
   .score-value { font-size: 14px; }
   .score-details { font-size: 7px; gap: 4px; }
   .score-label { font-size: 6px; }
-  .vs-text { font-size: 12px; }
-  .ai-board-container { max-width: 35%; }
+  .vs-text { font-size: 10px; }
+  .ai-board-container { max-width: 35vw; }
   .piece-tray { min-height: 48px; }
 }
 
@@ -1023,6 +1083,13 @@ html, body {
   border: 2px solid rgba(0, 212, 255, 0.3);
   border-radius: 4px;
   box-shadow: 0 0 20px rgba(0, 212, 255, 0.1), inset 0 0 20px rgba(0, 0, 0, 0.5);
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.game-board.on-fire {
+  border-color: var(--neon-pink);
+  box-shadow: 0 0 20px rgba(255, 45, 149, 0.4), inset 0 0 20px rgba(0, 0, 0, 0.5);
+  animation: firePulse 0.5s ease-in-out infinite;
 }
 
 /* ── Row Zap Headers ── */

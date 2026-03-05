@@ -10,8 +10,7 @@ export function renderGrid(
   ghostShape: PieceShape | null,
   ghostValid: boolean,
   clearingRows: number[],
-  clearingCols: number[],
-  onFire: boolean
+  clearingCols: number[]
 ) {
   const size = cellSize * GRID_SIZE;
   ctx.clearRect(0, 0, size, size);
@@ -70,17 +69,6 @@ export function renderGrid(
     }
   }
 
-  // ON FIRE border
-  if (onFire) {
-    const pulse = 0.5 + Math.sin(Date.now() / 150) * 0.5;
-    ctx.save();
-    ctx.shadowColor = COLORS.neonPink;
-    ctx.shadowBlur = GLOW.huge * pulse;
-    ctx.strokeStyle = COLORS.neonPink;
-    ctx.lineWidth = 3;
-    ctx.strokeRect(0, 0, size, size);
-    ctx.restore();
-  }
 }
 
 export function drawCell(

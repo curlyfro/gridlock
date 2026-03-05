@@ -28,7 +28,6 @@ export function GameBoard({
   boardRef, dimmed, label,
 }: GameBoardProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const animRef = useRef<number>(0);
   const size = cellSize * GRID_SIZE;
   const headerSize = showRowColHeaders ? 24 : 0;
 
@@ -41,19 +40,8 @@ export function GameBoard({
     canvas.width = size;
     canvas.height = size;
 
-    let running = true;
-    const draw = () => {
-      if (!running) return;
-      renderGrid(ctx, grid, cellSize, ghostPos, ghostShape, ghostValid, clearingRows, clearingCols, onFire);
-      animRef.current = requestAnimationFrame(draw);
-    };
-    draw();
-
-    return () => {
-      running = false;
-      cancelAnimationFrame(animRef.current);
-    };
-  }, [grid, cellSize, ghostPos, ghostShape, ghostValid, clearingRows, clearingCols, onFire, size]);
+    renderGrid(ctx, grid, cellSize, ghostPos, ghostShape, ghostValid, clearingRows, clearingCols);
+  }, [grid, cellSize, ghostPos, ghostShape, ghostValid, clearingRows, clearingCols, size]);
 
   const handleClick = useCallback((e: React.MouseEvent) => {
     if (!onCellClick) return;
@@ -68,7 +56,7 @@ export function GameBoard({
   return (
     <div
       ref={boardRef}
-      className="game-board"
+      className={`game-board${onFire ? ' on-fire' : ''}`}
       style={{
         width: size + headerSize,
         height: size + headerSize,
