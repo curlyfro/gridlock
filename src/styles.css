@@ -956,8 +956,8 @@ html, body {
     min-width: 0;
   }
 
-  .ai-side .score-panel .score-label { margin-bottom: 0; font-size: 7px; }
-  .ai-side .score-panel .score-value { font-size: 14px; }
+  .ai-side .score-panel .score-label { margin-bottom: 0; font-size: 9px; }
+  .ai-side .score-panel .score-value { font-size: 18px; }
   .ai-side .score-panel .score-details { display: none; }
 
   /* AI board: small preview below AI info */
@@ -996,9 +996,9 @@ html, body {
     width: 100%;
   }
 
-  .human-side .score-panel .score-label { margin-bottom: 0; font-size: 7px; }
-  .human-side .score-panel .score-value { font-size: 14px; }
-  .human-side .score-panel .score-details { font-size: 9px; margin-top: 0; }
+  .human-side .score-panel .score-label { margin-bottom: 0; font-size: 9px; }
+  .human-side .score-panel .score-value { font-size: 20px; }
+  .human-side .score-panel .score-details { font-size: 11px; margin-top: 0; }
 
   .score-panel {
     padding: 4px 10px;
