@@ -1,5 +1,4 @@
-import { Difficulty, GameMode } from '../../types/game';
-import { Button } from '../ui/Button';
+import { GameMode } from '../../types/game';
 import { loadSaveData } from '../../utils/localStorage';
 
 interface TitleScreenProps {

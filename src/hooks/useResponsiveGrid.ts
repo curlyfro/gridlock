@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { GRID_SIZE } from '../constants/pieces';
 
 export function useResponsiveGrid(containerRef: React.RefObject<HTMLDivElement | null>) {

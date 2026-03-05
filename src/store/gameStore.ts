@@ -6,9 +6,7 @@ import {
   Difficulty,
   GameMode,
   GridPosition,
-  Piece,
   PowerUpType,
-  ActivePowerUp,
   RoundState,
 } from '../types/game';
 import { createGrid, placePieceOnGrid, findFullRows, findFullCols, clearLines, addJunkRows, clearArea, clearRow, clearCol } from '../engine/grid';
@@ -213,7 +211,6 @@ export const useGameStore = create<GameState & GameActions>()(
       if (player.pieces.length === 0) return false;
       const remainingShapes = player.pieces.map(p => p.shape);
       if (!hasAnyValidPlacement(player.grid, remainingShapes)) {
-        const loser = owner;
         const winner = owner === 'human' ? 'ai' : 'human';
 
         set(s => {

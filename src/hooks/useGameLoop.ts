@@ -15,7 +15,7 @@ export function useGameLoop() {
   const checkGameOver = useGameStore(s => s.checkGameOver);
   const aiUsePowerUp = useGameStore(s => s.aiUsePowerUp);
 
-  const aiTimerRef = useRef<ReturnType<typeof setTimeout>>();
+  const aiTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const aiRunningRef = useRef(false);
 
   const scheduleAiMove = useCallback(() => {
