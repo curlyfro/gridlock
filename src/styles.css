@@ -898,17 +898,13 @@ html, body {
 
 /* Mobile */
 @media (max-width: 768px) {
-  /* Fill the viewport — no centering, no dead space */
-  .app-content {
-    align-items: stretch;
-    justify-content: stretch;
-  }
-
   .game-screen {
     padding: 4px;
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    /* Override centering from .app-content only for game screen */
+    align-self: stretch;
   }
 
   .game-layout {
@@ -916,9 +912,10 @@ html, body {
     flex-direction: column;
     gap: 2px;
     padding: 0;
-    height: 100%;
     flex: 1;
+    min-height: 0;
     align-items: center;
+    width: 100%;
   }
 
   .player-side {
@@ -927,26 +924,23 @@ html, body {
   }
 
   /* Explicit ordering: AI first, VS second, human fills rest */
-  .ai-side { order: 1; }
+  .ai-side { order: 1; flex-shrink: 0; }
   .vs-column { order: 2; flex-shrink: 0; }
   .human-side { order: 3; flex: 1; min-height: 0; }
 
-  /* AI side: compact horizontal row at top */
+  /* AI side: two-row compact layout at top */
   .ai-side {
-    flex-direction: row;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    gap: 8px;
+    gap: 2px;
     padding: 2px 4px;
-    flex-wrap: nowrap;
-    flex-shrink: 0;
   }
 
+  /* AI info row: robot + name + score inline */
   .ai-panel {
     flex-direction: row;
     align-items: center;
     gap: 6px;
-    flex-shrink: 0;
   }
 
   .ai-panel .robot-avatar { width: 28px !important; height: 28px !important; }
@@ -960,16 +954,16 @@ html, body {
     gap: 6px;
     padding: 3px 8px;
     min-width: 0;
-    flex-shrink: 0;
   }
 
   .ai-side .score-panel .score-label { margin-bottom: 0; font-size: 7px; }
   .ai-side .score-panel .score-value { font-size: 14px; }
   .ai-side .score-panel .score-details { display: none; }
 
+  /* AI board: small preview below AI info */
   .ai-board-container {
-    max-width: 40vw;
-    flex-shrink: 1;
+    max-width: 45vw;
+    aspect-ratio: 1;
   }
 
   /* VS: hide decorative elements, keep mode HUDs */
@@ -1069,7 +1063,7 @@ html, body {
   .score-details { font-size: 7px; gap: 4px; }
   .score-label { font-size: 6px; }
   .vs-text { font-size: 10px; }
-  .ai-board-container { max-width: 35vw; }
+  .ai-board-container { max-width: 40vw; }
   .piece-tray { min-height: 48px; }
 }
 
