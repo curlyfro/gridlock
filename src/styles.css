@@ -27,6 +27,7 @@
 html, body {
   width: 100%;
   height: 100%;
+  height: 100dvh;
   overflow: hidden;
   background: var(--bg);
   color: var(--text);
@@ -37,6 +38,7 @@ html, body {
 #root {
   width: 100%;
   height: 100%;
+  height: 100dvh;
 }
 
 /* ── App Layout ── */
@@ -411,6 +413,7 @@ html, body {
 .game-screen {
   width: 100%;
   height: 100%;
+  height: 100dvh;
   padding: 12px;
   overflow: hidden;
 }
@@ -442,6 +445,7 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
+  touch-action: none;
 }
 
 .board-label {
@@ -554,6 +558,7 @@ html, body {
   align-items: center;
   padding: 8px 12px;
   background: rgba(13, 13, 43, 0.6);
+  touch-action: none;
   border: 1px solid rgba(0, 212, 255, 0.1);
   border-radius: 8px;
   min-height: 72px;
@@ -867,39 +872,97 @@ html, body {
 
 /* Mobile */
 @media (max-width: 768px) {
+  .game-screen {
+    padding: 6px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+
   .game-layout {
     grid-template-columns: 1fr;
     grid-template-rows: auto auto auto;
-    gap: 8px;
-    padding: 4px;
+    gap: 4px;
+    padding: 0;
+    height: auto;
+    min-height: 100%;
   }
 
   .player-side {
+    gap: 4px;
+  }
+
+  /* AI side: compact row layout at top */
+  .ai-side {
+    order: -1;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+    padding: 2px 0;
+  }
+
+  .ai-side .score-panel {
+    padding: 4px 10px;
+    min-width: 0;
+    flex: 1;
+  }
+
+  .ai-side .score-panel .score-value { font-size: 16px; }
+  .ai-side .score-panel .score-details { display: none; }
+
+  .ai-board-container {
+    max-width: 40%;
+  }
+
+  .ai-panel {
+    flex-direction: row;
     gap: 6px;
   }
 
-  .ai-side {
-    order: -1;
-  }
+  .ai-panel .robot-avatar { width: 32px !important; height: 32px !important; }
+  .ai-name { font-size: 8px; }
+  .ai-thinking-dots { font-size: 7px; }
 
-  .ai-board-container {
-    max-width: 60%;
-  }
-
+  /* VS: minimal horizontal bar */
   .vs-column {
     flex-direction: row;
-    gap: 12px;
+    gap: 8px;
+    align-items: center;
   }
 
   .vs-center {
     flex-direction: row;
-    padding: 4px 0;
+    padding: 2px 0;
   }
 
+  .vs-text { font-size: 14px; }
+
   .vs-line {
-    width: 60px;
+    width: 40px;
     height: 2px;
     background: linear-gradient(to right, transparent, var(--neon-pink), transparent);
+  }
+
+  /* Human board: fill remaining space */
+  .human-side .board-container {
+    max-width: 100%;
+    aspect-ratio: auto;
+  }
+
+  .score-panel {
+    padding: 4px 10px;
+    min-width: 0;
+    width: 100%;
+  }
+
+  .score-value { font-size: 18px; }
+  .score-label { font-size: 7px; }
+
+  .piece-tray {
+    padding: 4px 6px;
+    gap: 6px;
+    min-height: 56px;
   }
 
   .mode-grid {
@@ -908,25 +971,11 @@ html, body {
   }
 
   .mode-hud {
-    padding: 4px 12px;
+    padding: 3px 10px;
   }
 
-  .hud-value {
-    font-size: 16px;
-  }
-
-  .score-panel {
-    padding: 6px 12px;
-    min-width: 0;
-    width: 100%;
-  }
-
-  .score-value { font-size: 20px; }
-
-  .piece-tray {
-    padding: 6px 8px;
-    gap: 8px;
-  }
+  .hud-label { font-size: 6px; }
+  .hud-value { font-size: 14px; }
 
   .game-over-scores {
     flex-direction: column;
@@ -944,14 +993,24 @@ html, body {
     width: 44px;
     height: 44px;
   }
+
+  .junk-indicator {
+    top: -22px;
+  }
+
+  .junk-warning { font-size: 7px; }
+  .junk-count { font-size: 10px; }
 }
 
 /* Small mobile */
 @media (max-width: 400px) {
-  .game-screen { padding: 4px; }
-  .score-value { font-size: 16px; }
-  .score-details { font-size: 8px; gap: 6px; }
-  .score-label { font-size: 7px; }
+  .game-screen { padding: 2px; }
+  .score-value { font-size: 14px; }
+  .score-details { font-size: 7px; gap: 4px; }
+  .score-label { font-size: 6px; }
+  .vs-text { font-size: 12px; }
+  .ai-board-container { max-width: 35%; }
+  .piece-tray { min-height: 48px; }
 }
 
 /* ── Floating Piece (drag) ── */

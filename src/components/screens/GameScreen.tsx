@@ -165,7 +165,7 @@ export function GameScreen() {
   const isPowerUpMode = activePowerUp !== null && activePowerUp.type !== 'wildcard';
 
   return (
-    <div className="game-screen" style={{ touchAction: 'none' }}>
+    <div className="game-screen">
       <ScreenShake trigger={shakeTrigger} intensity={human.onFire ? 8 : 4}>
         <div className="game-layout">
           {/* Human side */}
